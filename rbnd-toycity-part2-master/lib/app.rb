@@ -9,6 +9,7 @@ end # end setup_files method
 
 def print_date
   date = Time.now.strftime("%d/%m/%y %H:%M")
+  $report_file.write("Sales Report\n")
   $report_file.write("Date and time report generated: " + date)
   $report_file.write("\n")
 end # end print_date method
@@ -63,7 +64,6 @@ def print_toys_hash(list)
     $report_file.write("Total Sales: $#{'%.2f' % value["total_sales"]}\n")
     $report_file.write("Average Price: $#{'%.2f' % value["average_price"]}\n")
     $report_file.write("Average Discount: #{'%.2f' % value["average_discount"]}%\n")
-    #$report_file.write("#{key} : #{'%.2f' % value}\n")
   end # end each loop iterating through toys hash
 end # end print_toys_hash method
 
@@ -96,13 +96,10 @@ def print_brands_hash(list)
   list.each do |key, value|
     $report_file.write("\n#{key}\n")
     $report_file.write("Items In Stock: #{value["stock"]}\n")
-    $report_file.write("Average Price: #{'%.2f' % value["average_price"]}\n")
+    $report_file.write("Average Price: $#{'%.2f' % value["average_price"]}\n")
     $report_file.write("Total Sales: $#{'%.2f' % value["total_sales"]}\n")
-    #$report_file.write("Average Price: $#{'%.2f' % value["average_price"]}\n")
-    #$report_file.write("Average Discount: #{'%.2f' % value["average_discount"]}%\n")
-    #$report_file.write("#{key} : #{'%.2f' % value}\n")
   end # end each loop iterating through toys hash
-end
+end # end print_brands_hash method
 
 def print_brands_ascii
   $report_file.write("\n")
@@ -115,21 +112,27 @@ def print_brands_ascii
 	$report_file.write("\n")
 end # end print_brands_ascii method
 
-
-
 # For each brand in the data set:
   # Print the name of the brand
   # Count and print the number of the brand's toys we stock
   # Calculate and print the average price of the brand's toys
   # Calculate and print the total revenue of all the brand's toy sales combined
 
-setup_files()
+def create_report()
+  $report_file.truncate(0)
+  print_date()
+  brands = create_brands_hash()
+  toys = create_products_hash()
+  print_products_ascii()
+  print_toys_hash(toys)
+  print_brands_ascii()
+  print_brands_hash(brands)
+  $report_file.close
+end # end create_report method
 
-brands = create_brands_hash()
-toys = create_products_hash()
-$report_file.truncate(0)
-print_date()
-print_products_ascii()
-print_toys_hash(toys)
-print_brands_ascii()
-print_brands_hash(brands)
+def start()
+  setup_files()
+  create_report()
+end # end start method
+
+start()
