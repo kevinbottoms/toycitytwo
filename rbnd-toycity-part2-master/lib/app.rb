@@ -9,19 +9,20 @@ end # end setup_files method
 
 def print_date
   date = Time.now.strftime("%d/%m/%y %H:%M")
-  puts "Date and time report generated: " + date
+  $report_file.write("Date and time report generated: " + date)
+  $report_file.write("\n")
 end # end print_date method
 
 def print_products_ascii
-  puts "                     _            _       "
-  puts "                    | |          | |      "
-  puts " _ __  _ __ ___   __| |_   _  ___| |_ ___ "
-  puts "| '_ \\| '__/ _ \\ / _` | | | |/ __| __/ __|"
-  puts "| |_) | | | (_) | (_| | |_| | (__| |_\\__ \\"
-  puts "| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/"
-  puts "| |                                       "
-  puts "|_|                                       "
-  puts
+  $report_file.write("                     _            _       \n")
+  $report_file.write("                    | |          | |      \n")
+  $report_file.write(" _ __  _ __ ___   __| |_   _  ___| |_ ___ \n")
+  $report_file.write("| '_ \\| '__/ _ \\ / _` | | | |/ __| __/ __|\n")
+  $report_file.write("| |_) | | | (_) | (_| | |_| | (__| |_\\__ \\\n")
+  $report_file.write("| .__/|_|  \\___/ \\__,_|\\__,_|\\___|\\__|___/\n")
+  $report_file.write("| |                                       \n")
+  $report_file.write("|_|                                       \n")
+  $report_file.write("\n")
 end # end print_products_ascii
 
 # For each product in the data set:
@@ -50,10 +51,21 @@ def create_products_hash
     toys[product["title"]]["average_discount"] = 100 -
     (toys[product["title"]]["average_price"].to_f /
     toys[product["title"]]["retail_price"].to_f * 100)
-    #100 - (average_price.to_f / retail_price.to_f * 100)
   end # end each loop to create_products_hash
 	return toys
 end # end create_products_hash method
+
+def print_toys_hash(list)
+  list.each do |key, value|
+    $report_file.write("\n#{key}\n")
+    $report_file.write("Retail Price: $#{value["retail_price"]}\n")
+    $report_file.write("Amount Sold: #{value["amount_sold"]}\n")
+    $report_file.write("Total Sales: $#{'%.2f' % value["total_sales"]}\n")
+    $report_file.write("Average Price: $#{'%.2f' % value["average_price"]}\n")
+    $report_file.write("Average Discount: #{'%.2f' % value["average_discount"]}%\n")
+    #$report_file.write("#{key} : #{'%.2f' % value}\n")
+  end # end each loop iterating through toys hash
+end # end print_toys_hash method
 
 def create_brands_hash
 	brands = {}
@@ -80,16 +92,27 @@ def create_brands_hash
 	return brands
 end # end create_brands_hash method
 
-
+def print_brands_hash(list)
+  list.each do |key, value|
+    $report_file.write("\n#{key}\n")
+    $report_file.write("Items In Stock: #{value["stock"]}\n")
+    $report_file.write("Average Price: #{'%.2f' % value["average_price"]}\n")
+    $report_file.write("Total Sales: $#{'%.2f' % value["total_sales"]}\n")
+    #$report_file.write("Average Price: $#{'%.2f' % value["average_price"]}\n")
+    #$report_file.write("Average Discount: #{'%.2f' % value["average_discount"]}%\n")
+    #$report_file.write("#{key} : #{'%.2f' % value}\n")
+  end # end each loop iterating through toys hash
+end
 
 def print_brands_ascii
-	puts " _                         _     "
-	puts "| |                       | |    "
-	puts "| |__  _ __ __ _ _ __   __| |___ "
-	puts "| '_ \\| '__/ _` | '_ \\ / _` / __|"
-	puts "| |_) | | | (_| | | | | (_| \\__ \\"
-	puts "|_.__/|_|  \\__,_|_| |_|\\__,_|___/"
-	puts
+  $report_file.write("\n")
+	$report_file.write(" _                         _     \n")
+	$report_file.write("| |                       | |    \n")
+	$report_file.write("| |__  _ __ __ _ _ __   __| |___ \n")
+	$report_file.write("| '_ \\| '__/ _` | '_ \\ / _` / __|\n")
+	$report_file.write("| |_) | | | (_| | | | | (_| \\__ \\\n")
+	$report_file.write("|_.__/|_|  \\__,_|_| |_|\\__,_|___/\n")
+	$report_file.write("\n")
 end # end print_brands_ascii method
 
 
@@ -104,5 +127,9 @@ setup_files()
 
 brands = create_brands_hash()
 toys = create_products_hash()
-puts brands
-puts toys
+$report_file.truncate(0)
+print_date()
+print_products_ascii()
+print_toys_hash(toys)
+print_brands_ascii()
+print_brands_hash(brands)
